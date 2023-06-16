@@ -1,0 +1,179 @@
+---
+format: revealjs
+self-contained: true
+---
+
+## Paper Review
+
+<center>![<https://doi.org/10.3847/1538-4357/abfa9f>](figures/title-authors.png){width="900"}</center>
+
+##
+
+<center>![](figures/abstract.png)</center>
+
+## Summary {.smaller}
+
+- There may be a lag between X-ray and UV emission of AGNs but is hard to detect because of gaps in light curves.
+- GPs can interpolate the gaps and recover the lag.
+- Apply Structure Function Analysis to identify broken power law breakpoints.
+- Confirmed the lag is similar to previous studies
+
+
+(1) Simulation study to select kernel 
+    - Matern $\frac{1}{2}$ and Rational Quadratic
+(2) Fit GP model to X-ray and UV light curves from Mrk 335
+    - fit broken power law
+    - estimate lag
+
+## Data
+
+- Narrow-line Seyfert 1 galaxy Mrk 335
+- Swift X-ray and UVW2 light curves
+- Time bins of one day
+- MJD 54327 to 58626
+- N = 509 (X-ray band)
+- N = 498 (UVW2 band)
+
+
+# Simulation Study
+
+## Identifying Flux distribution
+
+![](figures/figure1.png)
+
+##
+
+![](figures/figure8.png)
+
+## Kolmogorov-Smirnov Test
+
+$H_0$: Sample was drawn from Gaussian distribution
+
+
+At $\alpha = 0.01$ significance level:
+
+- Fail to reject $H_0$ for X-ray (p = 0.164).
+
+- Reject $H_0$ for UV (p = $1 \times 10^{-20}$).
+
+- Fail to reject $H_0$ for log transformed UV (p = 0.028)
+
+. . . 
+
+OK, but perhaps unnatural to transform data to match likelihood.
+
+
+
+## Sim. Study Metholodology
+
+1. Simulate 1,000 light curves in X-ray and UV bands (4390 time points).
+2. Introduce unevenly spaced gaps in each light curve.
+3. Fit GP model with five different kernels (M 1/2, M 3/2, M 5/2, RQ, SE).
+4. Quantify fit using residual sum of squared errors (RSS)
+5. Calculate the negative log marginal likelihood (NLML)
+6. Average the RSS and NLML for each kernel.
+
+##
+
+![](figures/table1.png)
+
+
+
+## Statistical Slip-up?
+
+![](figures/t-tests.png)
+
+# GP on Mrk 335 Observations
+
+
+## Notes about GP
+
+- Data is standardised before fitting, which effectively removes one of the kernel hyperparameters
+- Mean function set to zero
+- Kernels are stationary
+
+##
+
+![](figures/figure3.png)
+
+
+##
+
+![](figures/figure4.png)
+
+
+## Structure Function
+
+PSD computation is complicated because of the uneven sampling of data so use structure function analysis instead.
+
+$$\mathrm{SF}(\tau) = \frac{1}{N(\tau)} \sum_i \left[ f(t_i) - f(t_i + \tau)\right]^2$$
+
+where $f(t_i)$ is the count rate at $t_i$, $\tau = t_j - t_i$, and $t_j \gt t_i$.
+
+This is basically an analysis of _autocorrelations_.
+
+
+##
+
+![](figures/figure5.png)
+
+## 
+
+![](figures/figure6.png)
+
+##
+
+![](figures/figure7.png)
+
+## Conclusions
+
+- GP kernels do not give same results therefore no strong evidence for break in X-ray power law.
+- Dips in structure function are due to uneven sampling.
+- Broad lag feature of up to 30 days.
+
+## Statistical Comments
+
+Good
+
+- Very nice introduction to GPs.
+- Simulation study is well structured.
+
+## Statistical Comments
+
+OK
+
+- Structure function analysis assumes stationarity.
+- Fitting power law to GP fit might be mispecified.
+- Uneven sampling eliminates PSD, but still causes problems for structure function.
+
+## Statistical Comments
+
+Dubious
+
+- Gaussian likelihood for count rate data.
+- Correlation between RSS and NLML is a weak argument.
+- t-test for determining whether RSS was significant suffers from pseudo-replication and multiple-testing.
+
+
+## Bayes' Theorem
+
+$$ P(\theta | D) = \frac{P(D | \theta) \times P(\theta)}{P(D)}$$
+
+$$\textrm{posterior} = \frac{\textrm{likelihood} \times \textrm{prior}}{\textrm{marginal likelihood}}$$
+
+## Bayesian Model Selection
+
+The Bayes Factor, $K$, is the ratio of two marginal likelihoods.
+
+$$K = \frac{P(D \mid M_1)}{P(D \mid M_2)} = \dots = \frac{P(M_1 | D)}{P(M_2|D)} \cdot \frac{P(M_2)}{P(M_1)}$$
+
+If the two models have the same prior probability, the Bayes Factor is equal to the ratio of the posterior probabilities.
+
+If $K \gt 1$ then $M_1$ is more supported by the data than $M_2$.
+
+## Negative Log Marginal Likelihood
+
+\begin{align}
+
+ - \log P(\boldsymbol{y}\mid\boldsymbol{t}, \theta) &= -\frac{1}{2}\boldsymbol{y}^\top (K_\theta(\boldsymbol{t},\boldsymbol{t}) + \sigma_y^2I)^{-1}\boldsymbol{y}\\ &-\frac{1}{2}\log | K_\theta(\boldsymbol{t},\boldsymbol{t}) + \sigma_y^2I|\\ &+ \frac{N}{2}\log(2\pi)
+\end{align}
